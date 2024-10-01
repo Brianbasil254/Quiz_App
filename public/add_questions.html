@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Quiz Question</title>
+    <link rel="stylesheet" href="./CSS/add_questions.css">
+</head>
+<body>
+    <div class="add-questions-container">
+        <h2>Add New Question</h2>
+        <form id="addQuestionForm">
+            <label for="question">Question:</label>
+            <input type="text" id="question" name="question" required>
+
+            <label for="option_a">Option A:</label>
+            <input type="text" id="option_a" name="option_a" required>
+
+            <label for="option_b">Option B:</label>
+            <input type="text" id="option_b" name="option_b" required>
+
+            <label for="option_c">Option C:</label>
+            <input type="text" id="option_c" name="option_c" required>
+
+            <label for="option_d">Option D:</label>
+            <input type="text" id="option_d" name="option_d" required>
+
+            <label for="answer">Correct Answer:</label>
+            <select id="answer" name="answer" required>
+                <option value="A">A</option>
+                <option value="B">B</option>
+                <option value="C">C</option>
+                <option value="D">D</option>
+            </select>
+
+            <label for="explanation">Explanation:</label>
+            <input type="text" id="explanation" name="explanation">
+
+            <button type="submit">Add Question</button>
+        </form>
+        <div id="addQuestionError"></div>
+        
+        <div id="redirectOptions" style="display:none;"></div>
+            <h3>What would you like to do next?</h3>
+            <button id="toQuizButton">Go to Quiz</button>
+            <button id="toResultsButton">View Results</button>
+        </div>
+    </div>
+
+    <script src="./JS/add_questions.js"></script>
+</body>
+</html>

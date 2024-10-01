@@ -1,0 +1,96 @@
+/* General body styling */
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    overflow-y: auto;
+}
+
+/* Container for the form */
+.add-questions-container {
+    background-color: #ffffff;
+    width: 400px;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    margin-top: 20px;
+}
+
+/* Form title */
+.add-questions-container h2 {
+    margin-bottom: 20px;
+    color: #333333;
+    font-size: 24px;
+}
+
+/* Form labels */
+.add-questions-container label {
+    display: block;
+    text-align: left;
+    margin-bottom: 8px;
+    color: #555555;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+/* Input and select fields */
+.add-questions-container input[type="text"],
+.add-questions-container select {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #cccccc;
+    border-radius: 5px;
+    font-size: 16px;
+    box-sizing: border-box;
+    background-color: #fafafa;
+    transition: border 0.3s;
+}
+
+/* Focused input styling */
+.add-questions-container input[type="text"]:focus,
+.add-questions-container select:focus {
+    border-color: #007bff;
+    outline: none;
+    background-color: #ffffff;
+}
+
+/* Submit button styling */
+.add-questions-container button {
+    width: 100%;
+    padding: 12px;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-top: 10px;
+}
+
+/* Submit button hover effect */
+.add-questions-container button:hover {
+    background-color: #218838;
+}
+
+/* Error message styling */
+#addQuestionError {
+    color: #d9534f;
+    margin-top: 10px;
+    font-size: 14px;
+}
+
+/* Responsive design for smaller screens */
+@media (max-width: 500px) {
+    .add-questions-container {
+        width: 100%;
+        padding: 15px;
+    }
+}
