@@ -95,7 +95,7 @@ function nextquestion() {
     console.log("Total Questions:", quizquestions.length);
     
     // Check if there are more questions
-    if (currentQuestionIndex < quizquestions.length) {
+    if (currentQuestionIndex < quizquestions.length -1) {
         showQuestion(currentQuestionIndex);
         questionCounter(currentQuestionIndex + 1); // Display the next question number
         clearInterval(timecount); // Clear the old timer
@@ -126,11 +126,16 @@ function showresultBox() {
         scoreIcon.innerHTML = `<i class="far fa-sad-cry"></i>`;
     }
     scoreText.innerHTML = scoreTag;
+    // Send the results to the backend to store in the database
+    console.log("Submitting results:", userScore, totalQuestions);
+    submitResults(userScore, totalQuestions);
 }
 
 // Show question function
 function showQuestion(index) {
-    const currentQuestion = quizquestions[index];
+    if (quizquestions && quizquestions.length > 0 && index < quizquestions.length) {
+        const currentQuestion = quizquestions[index];
+        console.log("Current Question:", currentQuestion);
 
     // Hide the explanation text when moving to the next question
     explanationText.style.display = "none"; 
@@ -157,7 +162,7 @@ function showQuestion(index) {
         optionElements.forEach((option, idx) => {
             option.addEventListener("click", () => optionSelected(option, idx));
         });
-    } else {
+    }} else {
         console.error("Options are missing or empty for the current question.");
         optionList.innerHTML = `<div class="option">No options available for this question.</div>`;
     }
@@ -168,11 +173,12 @@ function optionSelected(answer, idx) {
     clearInterval(timecount);
     selectedAnswerIndex = idx;  // Store the selected answer index
 
+    // Extract selected option and correct answer
     let selectedOption = answer.textContent.trim().slice(1).toLowerCase();
     let correctAnswer = quizquestions[currentQuestionIndex].answer.toLowerCase();
 
-    if (selectedOption === correctAnswer) {
-        userScore++;
+    if (selectedOption === correctAnswer.toLowerCase()) {
+        userScore++; // Increment score
         answer.classList.add("correct");
     } else {
         answer.classList.add("incorrect");
@@ -184,14 +190,15 @@ function optionSelected(answer, idx) {
         });
     }
 
-    // Disable all options
+    // Disable all options after selection
     optionList.querySelectorAll(".option").forEach(option => option.classList.add("disabled"));
 
-    // Show explanation
+    // Show explanation and next button
     explanationText.innerHTML = `<p>${quizquestions[currentQuestionIndex].explanation}</p>`;
-    explanationText.style.display = "block";  // Show the explanation
-    nextbtn.style.display = "block";  // Show the next button
+    explanationText.style.display = "block";  
+    nextbtn.style.display = "block";  
 }
+
 
 // Question counter
 function questionCounter(index) {
@@ -200,23 +207,78 @@ function questionCounter(index) {
 
 // Fetch questions from API or local storage
 window.onload = async function () {
+    // Ensure the JWT token is available
+    const token = localStorage.getItem('token');
+    if (!token) {
+        alert("You need to be logged in to access this quiz.");
+        window.location.href = "/login.html"; // Redirect to login if no token is found
+        return;
+    }
+
+    // Check if questions are stored in localStorage
     let storedQuestions = JSON.parse(localStorage.getItem('quizquestions'));
 
     if (storedQuestions && storedQuestions.length > 0) {
         quizquestions = storedQuestions;
     } else {
-        const response = await fetch('http://localhost:3000/api/questions');
+        // Fetch quiz questions from the backend with token in Authorization header
+        const response = await fetch('http://localhost:3000/api/questions', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}` // Include JWT token in the header
+            }
+        });
+
+        // Check for 403 error
+        if (response.status === 403) {
+            alert("Access denied. Please log in again.");
+            localStorage.removeItem('token');  // Clear expired token
+            window.location.href = "/login.html";  // Redirect to login
+            return;
+        }
+
         const data = await response.json();
         console.log("Fetched Questions Data:", data);
         quizquestions = data;
         localStorage.setItem('quizquestions', JSON.stringify(quizquestions));
     }
 
-    console.log("Quiz Questions Array:", quizquestions);
-
+    // Display the first question
     if (quizquestions.length > 0) {
         showQuestion(0);
     } else {
         console.log("No questions found.");
     }
 };
+
+async function submitResults(userScorecore, totalQuestions) {
+    const token = localStorage.getItem('token');
+
+    if (!token) {
+        alert("Session expired. Please log in again.");
+        window.location.href = "/login.html";
+        return;
+    }
+
+    try {
+        const response = await fetch('http://localhost:3000/api/results', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({ score: score, total_questions: totalQuestions })
+        });
+
+        const result = await response.json();
+        console.log(result.message); // Show a confirmation in the console
+        if (result.success) {
+            console.log("Results submitted successfully.");
+        } else {
+            console.error("Error submitting results:", result.message);
+        }
+    } catch (error) {
+        console.error("Error submitting results:", error.message);
+    }
+}

@@ -1,39 +1,46 @@
-window.onload = async function () {
-    const token = localStorage.getItem('token'); // Get the token from local storage
+async function fetchResults() {
+    const token = localStorage.getItem('token');
+
+    if (!token) {
+        alert("You need to log in as admin to view the results.");
+        window.location.href = "/login.html";
+        return;
+    }
 
     try {
-        const response = await fetch("/api/admin/results", {
-            method: "GET",
+        const response = await fetch('http://localhost:3000/api/admin/results', {
+            method: 'GET',
             headers: {
-                "Authorization": `Bearer ${token}` // Send the token for verification
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
             }
         });
 
-        const results = await response.json();
-        if (results.success === false) {
-            alert(results.message); // Handle access denied or other messages
-            return;
+        if (response.status === 403) {
+            alert("Access denied.");
+            window.location.href = "/login.html";
         }
 
-        const tbody = document.getElementById("resultsTable").querySelector("tbody");
+        const data = await response.json();
+        const resultsBody = document.getElementById('resultsBody');
 
-        results.forEach(result => {
-            const row = document.createElement("tr");
-            row.innerHTML = `
+        data.forEach(result => {
+            const row = `<tr>
                 <td>${result.username}</td>
                 <td>${result.score}</td>
                 <td>${result.total_questions}</td>
-                <td>${new Date(result.date_taken).toLocaleDateString()}</td>
-            `;
-            tbody.appendChild(row);
+                <td>${result.date_taken}</td>
+            </tr>`;
+            resultsBody.insertAdjacentHTML('beforeend', row);
         });
     } catch (error) {
-        console.error("Error fetching results:", error);
+        console.error("Error fetching results:", error.message);
     }
-};
-
-// Logout function
-function logout() {
-    localStorage.removeItem('token'); // Remove the token
-    window.location.href = '/login.html'; // Redirect to login
 }
+
+function logout() {
+    localStorage.removeItem('token');
+    window.location.href = "/login.html";
+}
+
+window.onload = fetchResults;

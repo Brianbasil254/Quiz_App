@@ -5,9 +5,11 @@ const { verifyToken } = require('../middlewares/middlewares'); // Correct import
 
 // Get all questions
 router.get('/questions', (req, res) => {
-    let sql = 'SELECT * FROM questions';
+    let sql = 'SELECT * FROM Quizquestions';
     db.query(sql, (err, result) => {
         if (err) throw err;
+
+        console.log("Fetched questions from database:", result); // Add a debug log
 
         // Format the result by combining option_a, option_b, option_c, option_d into an Options array
         const formattedQuestions = result.map(question => ({

@@ -104,12 +104,22 @@ app.get('/api/questions', verifyToken, (req, res) => {
 app.post('/api/results', verifyToken, (req, res) => {
     const { score, total_questions } = req.body;
 
+    // Ensure the user is authenticated
+    if (!req.user) {
+        return res.status(403).send("Access denied. No token provided.");
+    }
+
+    // Insert user results into the database
     db.query('INSERT INTO Results (user_id, score, total_questions, date_taken) VALUES (?, ?, ?, NOW())',
         [req.user.id, score, total_questions], (err, result) => {
-            if (err) throw err;
-            res.json({ success: true, message: "Results submitted" });
+            if (err) {
+                console.error("Error submitting results:", err);
+                return res.status(500).json({ success: false, message: "Error submitting results" });
+            }
+            res.json({ success: true, message: "Results submitted successfully" });
         });
 });
+
 
 // Admin route to view all user results (protected and restricted to admins)
 app.get('/api/admin/results', verifyToken, (req, res) => {
