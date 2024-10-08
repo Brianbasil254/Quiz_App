@@ -48,4 +48,24 @@ router.post('/questions', verifyToken, (req, res) => {
     });
 });
 
+// Delete a specific user result by ID (admin-only)
+router.delete('/admin/results/:id', verifyToken, (req, res) => {
+    const { id } = req.params;
+
+    // Check if the user is an admin
+    if (req.user.role !== 'admin') {
+        return res.status(403).json({ success: false, message: "Access denied" });
+    }
+
+    const sql = 'DELETE FROM Results WHERE id = ?';
+    db.query(sql, [id], (err, result) => {
+        if (err) {
+            return res.status(500).json({ success: false, message: "Error deleting result" });
+        }
+        res.json({ success: true, message: "Result deleted successfully" });
+    });
+});
+
+
+
 module.exports = router;

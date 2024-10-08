@@ -3,22 +3,47 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Welcome</title>
+    <title>THE QUIZ APP </title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+        }
+        h1 {
+            color: #333;
+        }
+        p {
+            margin-bottom: 20px;
+            color: #666;
+        }
+        #loading {
+            font-size: 20px;
+            color: #007BFF;
+        }
+    </style>
 </head>
 <body>
     <h1>Welcome to the Quiz App</h1>
-    <p>If you're not logged in, you'll be redirected to the login page.</p>
+    <p>You'll be redirected to the login page.</p>
+    <div id="loading">Loading...</div>
 
     <script>
         // Check if the user is logged in by checking the token
         const token = localStorage.getItem('token');
-        if (!token) {
-            // If no token is found, redirect to login.html
-            window.location.href = 'login.html';
-        } else {
-            // If token exists, redirect to the quiz page
-            window.location.href = 'quiz.html';
-        }
+        setTimeout(() => {
+            if (!token) {
+                // If no token is found, redirect to login.html
+                window.location.href = 'login.html';
+            } else {
+                // If token exists, redirect to the quiz page
+                window.location.href = 'quiz.html';
+            }
+        }, 2000); // Adjust the delay as necessary
     </script>
 </body>
 </html>

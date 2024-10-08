@@ -127,8 +127,9 @@ app.get('/api/admin/results', verifyToken, (req, res) => {
         return res.status(403).json({ success: false, message: "Access denied" });
     }
 
-    db.query('SELECT Users.username, Results.score, Results.total_questions, Results.date_taken FROM Results JOIN Users ON Results.user_id = Users.id', 
-    (err, results) => {
+    // Fetch results from the database
+    db.query('SELECT Users.username, Results.score, Results.total_questions, Results.date_taken, Results.id FROM Results JOIN Users ON Results.user_id = Users.id', 
+        (err, results) => {
         if (err) throw err;
         res.json(results);
     });
