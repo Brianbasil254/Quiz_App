@@ -95,7 +95,7 @@ function nextquestion() {
     console.log("Total Questions:", quizquestions.length);
     
     // Check if there are more questions
-    if (currentQuestionIndex < quizquestions.length -1) {
+    if (currentQuestionIndex < quizquestions.length) {
         showQuestion(currentQuestionIndex);
         questionCounter(currentQuestionIndex + 1); // Display the next question number
         clearInterval(timecount); // Clear the old timer
@@ -174,17 +174,19 @@ function optionSelected(answer, idx) {
     selectedAnswerIndex = idx;  // Store the selected answer index
 
     // Extract selected option and correct answer
-    let selectedOption = answer.textContent.trim().slice(1).toLowerCase();
     let correctAnswer = quizquestions[currentQuestionIndex].answer.toLowerCase();
+    let selectedLetter = answer.querySelector('span').innerText.toLowerCase();
 
-    if (selectedOption === correctAnswer.toLowerCase()) {
+    if (selectedLetter === correctAnswer) {
         userScore++; // Increment score
+        console.log("Correct Answer Selected, User Score Incremented:", userScore);
         answer.classList.add("correct");
     } else {
         answer.classList.add("incorrect");
         // Highlight the correct option
         optionList.querySelectorAll(".option").forEach(option => {
-            if (option.textContent.trim().slice(1).toLowerCase() === correctAnswer) {
+            let optionLetter = option.querySelector('span').innerText.toLowerCase();
+            if (optionLetter === correctAnswer) {
                 option.classList.add("correct");
             }
         });
@@ -196,7 +198,10 @@ function optionSelected(answer, idx) {
     // Show explanation and next button
     explanationText.innerHTML = `<p>${quizquestions[currentQuestionIndex].explanation}</p>`;
     explanationText.style.display = "block";  
-    nextbtn.style.display = "block";  
+    nextbtn.style.display = "block";
+
+    console.log("Current User Score:", userScore);  // This will help debug the score
+  
 }
 
 
@@ -252,7 +257,7 @@ window.onload = async function () {
     }
 };
 
-async function submitResults(userScorecore, totalQuestions) {
+async function submitResults(userScore, totalQuestions) {
     const token = localStorage.getItem('token');
 
     if (!token) {
@@ -268,7 +273,7 @@ async function submitResults(userScorecore, totalQuestions) {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${token}`
             },
-            body: JSON.stringify({ score: score, total_questions: totalQuestions })
+            body: JSON.stringify({ score: userScore, total_questions: totalQuestions })
         });
 
         const result = await response.json();

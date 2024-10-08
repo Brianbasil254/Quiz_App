@@ -4,7 +4,7 @@ const db = require('../config/db');
 const { verifyToken } = require('../middlewares/middlewares'); // Correct import statement
 
 // Get all questions
-router.get('/questions', (req, res) => {
+router.get('/questions', verifyToken, (req, res) => {
     let sql = 'SELECT * FROM Quizquestions';
     db.query(sql, (err, result) => {
         if (err) throw err;

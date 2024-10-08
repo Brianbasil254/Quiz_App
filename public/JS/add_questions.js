@@ -26,6 +26,10 @@ document.getElementById("addQuestionForm").addEventListener("submit", async func
         if (result.success) {
             alert("Question added successfully");
             document.getElementById("addQuestionForm").reset(); // Reset form after success
+
+            // Show the redirect options
+            document.getElementById('redirectOptions').style.display = 'block';
+
         } else {
             document.getElementById("addQuestionError").textContent = result.message;
         }
@@ -33,6 +37,12 @@ document.getElementById("addQuestionForm").addEventListener("submit", async func
         document.getElementById("addQuestionError").textContent = "An error occurred while adding the question.";
     }
 });
+
+// Function to force refresh quiz questions
+function forceRefreshQuestions() {
+    localStorage.removeItem('quizquestions'); // Remove cached questions
+    window.location.href = '/quiz.html'; // Redirect to quiz page where questions will be reloaded
+}
 
 // Redirect to quiz page
 document.getElementById("toQuizButton").addEventListener("click", function () {
