@@ -9,53 +9,47 @@ const { verifyToken } = require('./middlewares/middlewares'); // Import verifyTo
 
 const app = express();
 
-
-// JWT secret key (Make sure this is defined at the top)
+// JWT secret key
 const SECRET_KEY = "4545"; 
 
 // Middleware
 app.use(bodyParser.json());
 app.use(cors());
+app.use(express.static('public')); // Serve static files for the frontend
 
-// Serve static files for the frontend
-app.use(express.static('public'));
-
-
-// Serve the login or register page first
+// Serve the dashboard as the landing page
 app.get('/', (req, res) => {
-    res.sendFile(__dirname + '/public/register.html'); // Serve the register page by default
+    res.sendFile(__dirname + '/public/dashboard.html'); // Serve dashboard as default page
 });
 
 // Register a new user
 app.post('/api/register', async (req, res) => {
     const { username, password, role } = req.body;
 
-    // Check if an admin already exists if the selected role is "admin"
+    // Check if admin already exists if registering as admin
     if (role === 'admin') {
         db.query('SELECT * FROM Users WHERE role = "admin"', (err, results) => {
             if (err) throw err;
             if (results.length > 0) {
                 return res.json({ success: false, message: "Admin already exists. Only one admin is allowed." });
             }
-
-            // Proceed to register the admin
+            // Register admin
             registerUser(username, password, role, res);
         });
     } else {
-        // Proceed to register a regular user
+        // Register regular user
         registerUser(username, password, role, res);
     }
 });
 
+// Helper function to register users
 function registerUser(username, password, role, res) {
-    // Check if username exists
     db.query('SELECT * FROM Users WHERE username = ?', [username], async (err, results) => {
         if (err) throw err;
         if (results.length > 0) {
             return res.json({ success: false, message: "Username already exists" });
         }
 
-        // Hash password and save user
         const hashedPassword = await bcrypt.hash(password, 10);
         db.query('INSERT INTO Users (username, password, role) VALUES (?, ?, ?)', [username, hashedPassword, role], (err, result) => {
             if (err) throw err;
@@ -63,7 +57,6 @@ function registerUser(username, password, role, res) {
         });
     });
 }
-
 
 // Login route
 app.post('/api/login', (req, res) => {
@@ -87,9 +80,17 @@ app.post('/api/login', (req, res) => {
     });
 });
 
-// Redirect to the quiz page after login
+// Redirect to quiz page after login
 app.get('/quiz', verifyToken, (req, res) => {
     res.sendFile(__dirname + '/public/quiz.html');
+});
+
+// Admin route to add new questions (restricted to admins)
+app.get('/admin/add-questions', verifyToken, (req, res) => {
+    if (req.user.role !== 'admin') {
+        return res.status(403).json({ success: false, message: "Access denied" });
+    }
+    res.sendFile(__dirname + '/public/add_questions.html');
 });
 
 // Fetch quiz questions (protected route)
@@ -104,12 +105,10 @@ app.get('/api/questions', verifyToken, (req, res) => {
 app.post('/api/results', verifyToken, (req, res) => {
     const { score, total_questions } = req.body;
 
-    // Ensure the user is authenticated
     if (!req.user) {
         return res.status(403).send("Access denied. No token provided.");
     }
 
-    // Insert user results into the database
     db.query('INSERT INTO Results (user_id, score, total_questions, date_taken) VALUES (?, ?, ?, NOW())',
         [req.user.id, score, total_questions], (err, result) => {
             if (err) {
@@ -120,14 +119,12 @@ app.post('/api/results', verifyToken, (req, res) => {
         });
 });
 
-
-// Admin route to view all user results (protected and restricted to admins)
+// Admin route to view all user results (restricted to admins)
 app.get('/api/admin/results', verifyToken, (req, res) => {
     if (req.user.role !== 'admin') {
         return res.status(403).json({ success: false, message: "Access denied" });
     }
 
-    // Fetch results from the database
     db.query('SELECT Users.username, Results.score, Results.total_questions, Results.date_taken, Results.id FROM Results JOIN Users ON Results.user_id = Users.id', 
         (err, results) => {
         if (err) throw err;

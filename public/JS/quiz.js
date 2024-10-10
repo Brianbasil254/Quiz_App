@@ -131,6 +131,14 @@ function showresultBox() {
     submitResults(userScore, totalQuestions);
 }
 
+async function fetchQuestions() {
+    const response = await fetch('http://localhost:3000/api/questions');
+    const data = await response.json();
+    console.log("Fetched Questions Data:", data); // Should log all 7 questions here
+    quizquestions = data;
+    localStorage.setItem('quizquestions', JSON.stringify(quizquestions));
+}
+
 // Show question function
 function showQuestion(index) {
     if (quizquestions && quizquestions.length > 0 && index < quizquestions.length) {
