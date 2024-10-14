@@ -3,7 +3,16 @@
   if (!token) {
       // If no token is found, redirect to login.html
       window.location.href = 'login.html';
-  }
+  } else {
+    // Decode the token to check if the user is an admin
+    const tokenPayload = JSON.parse(atob(token.split('.')[1])); // Decode JWT payload
+    if (tokenPayload.role === 'admin') {
+        // Show admin-only links
+        document.querySelectorAll('.admin-only').forEach(function (elem) {
+            elem.style.display = 'block';
+        });
+    }
+}
 
   // Button to redirect to the quiz
   document.getElementById('quizBtn').addEventListener('click', function () {

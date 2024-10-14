@@ -22,9 +22,9 @@ document.getElementById("loginForm").addEventListener("submit", async function (
 
             // Redirect based on role
             if (decodedToken.role === "admin") {
-                window.location.href = "/add_questions.html"; // Redirect admin to add questions
+                window.location.href = "/dashboard.html"; // Redirect admin to add questions
             } else {
-                window.location.href = "/quiz.html"; // Redirect users to quiz page
+                window.location.href = "dashboard.html"; // Redirect users to quiz page
             }
         } else {
             document.getElementById("loginError").textContent = result.message;

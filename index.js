@@ -17,9 +17,9 @@ app.use(bodyParser.json());
 app.use(cors());
 app.use(express.static('public')); // Serve static files for the frontend
 
-// Serve the dashboard as the landing page
+// Serve the index as the landing page
 app.get('/', (req, res) => {
-    res.sendFile(__dirname + '/public/dashboard.html'); // Serve dashboard as default page
+    res.sendFile(__dirname + '/public/index.html'); 
 });
 
 // Register a new user

@@ -36,7 +36,7 @@ exitbtn.addEventListener("click", function () {
 
 // Quit button event
 quitbtn.addEventListener("click", function () {
-    window.location.reload();
+    window.location.href = "/dashboard.html";
 });
 
 // Timer function
@@ -134,7 +134,7 @@ function showresultBox() {
 async function fetchQuestions() {
     const response = await fetch('http://localhost:3000/api/questions');
     const data = await response.json();
-    console.log("Fetched Questions Data:", data); // Should log all 7 questions here
+    console.log("Fetched Questions Data:", data); // Should log all questions here
     quizquestions = data;
     localStorage.setItem('quizquestions', JSON.stringify(quizquestions));
 }

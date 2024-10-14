@@ -70,7 +70,7 @@ async function deleteResult(id) {
 
 function logout() {
     localStorage.removeItem('token');
-    window.location.href = "/login.html";
+    window.location.href = "/dashboard.html";
 }
 
 window.onload = fetchResults;
