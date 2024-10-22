@@ -1,4 +1,4 @@
-Here’s a draft README file for your quiz application project:
+Here’s a README file for the quiz application project:
 
 ---
 
@@ -41,7 +41,7 @@ To run this project locally, follow these steps:
 
 1. **Clone the repository:**
    ```bash
-   git clone https://github.com/your-username/quiz-app.git
+   git clone https://github.com/Brianbasil254/quiz-app.git
    cd quiz-app
    ```
 
